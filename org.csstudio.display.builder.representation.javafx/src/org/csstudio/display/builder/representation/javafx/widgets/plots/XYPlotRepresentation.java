@@ -27,7 +27,6 @@ import org.csstudio.display.builder.model.widgets.plots.PlotWidgetTraceType;
 import org.csstudio.display.builder.model.widgets.plots.XYPlotWidget;
 import org.csstudio.display.builder.model.widgets.plots.XYPlotWidget.MarkerProperty;
 import org.csstudio.display.builder.representation.Preferences;
-import org.csstudio.display.builder.representation.RepresentationUpdateThrottle;
 import org.csstudio.display.builder.representation.javafx.JFXUtil;
 import org.csstudio.display.builder.representation.javafx.widgets.RegionBaseRepresentation;
 import org.csstudio.javafx.rtplot.Axis;
@@ -378,9 +377,10 @@ public class XYPlotRepresentation extends RegionBaseRepresentation<Pane, XYPlotW
     {
         // Plot is only active in runtime mode, not edit mode
         plot = new RTValuePlot(! toolkit.isEditMode());
-        plot.setUpdateThrottle(RepresentationUpdateThrottle.plot_update_delay, TimeUnit.MILLISECONDS);
+        plot.setUpdateThrottle(Preferences.getPlotUpdateDelayMillisec(), TimeUnit.MILLISECONDS);
         plot.showToolbar(false);
         plot.showCrosshair(false);
+        plot.setManaged(false);
 
         // Create PlotMarkers once. Not allowing adding/removing them at runtime
         if (! toolkit.isEditMode())
@@ -564,8 +564,7 @@ public class XYPlotRepresentation extends RegionBaseRepresentation<Pane, XYPlotW
         {
             final int w = model_widget.propWidth().getValue();
             final int h = model_widget.propHeight().getValue();
-            plot.setPrefWidth(w);
-            plot.setPrefHeight(h);
+            plot.resize(w, h);
         }
         plot.requestUpdate();
     }
